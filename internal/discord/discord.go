@@ -1,4 +1,6 @@
 package discord
 
-type Discord interface {
+type Provider interface {
+	Connect() error
+	Close() error
 }

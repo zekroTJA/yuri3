@@ -15,9 +15,7 @@ type ConfitaProvider struct {
 
 func NewConfitaProvider() *ConfitaProvider {
 	return &ConfitaProvider{
-		baseProvider: &baseProvider{
-			instance: new(Config),
-		},
+		baseProvider: newBaseProvider(),
 	}
 }
 
