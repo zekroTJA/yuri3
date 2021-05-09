@@ -29,8 +29,7 @@ func main() {
 	builder.Add(di.Def{
 		Name: static.DiDiscordProvider,
 		Build: func(ctn di.Container) (interface{}, error) {
-			cfg := ctn.Get(static.DiConfigProvider).(config.Provider)
-			return discord.NewDiscordgoProvider(cfg.Instance().Discord.Token)
+			return discord.NewDiscordgoProvider(ctn)
 		},
 		Close: func(obj interface{}) error {
 			logrus.Info("Tearing down Discord connection ...")
