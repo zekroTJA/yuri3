@@ -8,6 +8,7 @@ require (
 	github.com/heetch/confita v0.10.0
 	github.com/joho/godotenv v1.3.0
 	github.com/kr/pretty v0.2.0 // indirect
+	github.com/lukasl-dev/waterlink v0.0.1 // indirect
 	github.com/sarulabs/di/v2 v2.4.2
 	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/crypto v0.0.0-20210506145944-38f3c27a63bf // indirect

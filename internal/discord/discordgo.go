@@ -9,31 +9,17 @@ import (
 	"github.com/zekroTJA/yuri3/internal/static"
 )
 
-type DiscordgoProvider struct {
-	session *discordgo.Session
-}
-
-func NewDiscordgoProvider(ctn di.Container) (p *DiscordgoProvider, err error) {
-	p = &DiscordgoProvider{}
-
+func NewDiscordSession(ctn di.Container) (session *discordgo.Session, err error) {
 	cfg := ctn.Get(static.DiConfigProvider).(config.Provider)
 
-	if p.session, err = discordgo.New("Bot " + cfg.Instance().Discord.Token); err != nil {
+	if session, err = discordgo.New("Bot " + cfg.Instance().Discord.Token); err != nil {
 		return
 	}
 
-	p.session.AddHandler((&events.Ready{}).Handle)
+	session.AddHandler((&events.Ready{}).Handle)
 
-	cmdHandler := commands.NewHandler(p.session)
+	cmdHandler := commands.NewHandler(session)
 	cmdHandler.Register(commands.NewInfo())
 
 	return
-}
-
-func (p *DiscordgoProvider) Connect() error {
-	return p.session.Open()
-}
-
-func (p *DiscordgoProvider) Close() error {
-	return p.session.Close()
 }

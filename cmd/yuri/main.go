@@ -5,11 +5,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 	"github.com/sarulabs/di/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/zekroTJA/yuri3/internal/config"
 	"github.com/zekroTJA/yuri3/internal/discord"
+	"github.com/zekroTJA/yuri3/internal/lavalink"
 	"github.com/zekroTJA/yuri3/internal/static"
 )
 
@@ -27,13 +29,20 @@ func main() {
 	})
 
 	builder.Add(di.Def{
-		Name: static.DiDiscordProvider,
+		Name: static.DiDiscord,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return discord.NewDiscordgoProvider(ctn)
+			return discord.NewDiscordSession(ctn)
 		},
 		Close: func(obj interface{}) error {
 			logrus.Info("Tearing down Discord connection ...")
-			return obj.(discord.Provider).Close()
+			return obj.(*discordgo.Session).Close()
+		},
+	})
+
+	builder.Add(di.Def{
+		Name: static.DiLavalinkProvider,
+		Build: func(ctn di.Container) (interface{}, error) {
+			return lavalink.NewWaterlinkProvider(ctn), nil
 		},
 	})
 
@@ -46,8 +55,9 @@ func main() {
 		ForceColors: cfg.Instance().Debug,
 	})
 
-	dc := ctn.Get(static.DiDiscordProvider).(discord.Provider)
-	if err := dc.Connect(); err != nil {
+	ctn.Get(static.DiLavalinkProvider)
+	dc := ctn.Get(static.DiDiscord).(*discordgo.Session)
+	if err := dc.Open(); err != nil {
 		logrus.WithError(err).Fatal("Failed connecting to discord")
 	}
 	block()
